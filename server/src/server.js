@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config(); // ✅ sabse pehle
-console.log("MONGO ENV:", process.env.MONGODB_URI); // 
+// console.log("MONGO ENV:", process.env.MONGODB_URI); 
 import app from "./app.js";
 import connectDB from "./config/db.js";
 
