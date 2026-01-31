@@ -1,6 +1,11 @@
 import express from "express";
-import { registerUser, loginUser, getMe } from "../controllers/auth.controller.js";
+import {
+  getMe,
+  loginUser,
+  registerUser,
+} from "../controllers/auth.controller.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
+import authorize from "../middlewares/authorize.middleware.js";
 
 const router = express.Router();
 
@@ -11,4 +16,11 @@ router.post("/login", loginUser);
 // 🔐 Protected route
 router.get("/me", authMiddleware, getMe);
 
+router.get("/admin-test", authMiddleware, authorize("admin"), (req, res) => {
+  res.json({
+    success: true,
+    message: "Welcome Admin",
+    user: req.user,
+  });
+});
 export default router;

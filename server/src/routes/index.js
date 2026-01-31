@@ -1,10 +1,11 @@
 import express from "express";
 import authRoutes from "./auth.router.js";
-import jwt from "jsonwebtoken";
-
+import courseRoutes from "./course.router.js";
+import enrollmentRoutes from "./enrollment.route.js"
 const router = express.Router();
 
-// All API routes under /api/v1
 router.use("/auth", authRoutes);
+router.use("/courses", courseRoutes);
+router.use("/enrollments", enrollmentRoutes)
 
 export default router;

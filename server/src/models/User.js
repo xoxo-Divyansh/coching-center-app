@@ -21,15 +21,19 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       select: false, // by default, password is not returned in queries
     },
+    role: {
+      type: String,
+      enum: ["student", "teacher", "admin"],
+      default: "student",
+    },
   },
   { timestamps: true },
 );
 
 // Hash password before saving
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password"))
-    return;
-    
+  if (!this.isModified("password")) return;
+
   this.password = await bcrypt.hash(this.password, 10);
 });
 

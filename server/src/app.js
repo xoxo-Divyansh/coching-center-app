@@ -1,8 +1,8 @@
 import cors from "cors";
 import express from "express";
-import errorMiddleware from "./middlewares/error.Middleware.js";
 import routes from "./routes/index.js";
-// import authMiddleware from "./middlewares/auth.middleware.js"
+import errorMiddleware from "./middlewares/error.middleware.js";
+
 import jwt from "jsonwebtoken"
 
 const app = express();
@@ -26,7 +26,7 @@ app.get("/debug-token", (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    res.json(decoded);
+    res.json(decoded);  
   } catch (e) {
     res.status(401).json({ error: e.message });
   }
