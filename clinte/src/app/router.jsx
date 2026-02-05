@@ -1,15 +1,14 @@
 import { createBrowserRouter } from "react-router-dom";
 
-// layouts
-import MainLayout from "@/layouts/MainLayout";
-import PublicLayout from "@/layouts/PublicLayout";
-import AdminLayout from "@/layouts/AdminLayout";
+import MainLayout from "../layouts/MainLayout";
+import PublicLayout from "../layouts/PublicLayout";
+import AdminLayout from "../layouts/AdminLayout";
 
-// pages
-import Home from "@/pages/home/Home";
-import Login from "@/pages/auth/Login";
-import Register from "@/pages/auth/Register";
-import Courses from "@/pages/courses/Courses";
+import RequireAuth from "../guards/RequireAuth";
+
+import Home from "@/features/home/Home";
+import Login from "@/features/auth/Login";
+import Register from "@/features/auth/Register";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 
 const router = createBrowserRouter([
@@ -21,13 +20,17 @@ const router = createBrowserRouter([
       { path: "/register", element: <Register /> },
     ],
   },
+
   {
-    element: <MainLayout />,
-    children: [{ path: "/courses", element: <Courses /> }],
-  },
-  {
-    element: <AppLayout />,
-    children: [{ path: "/admin", element: <AdminDashboard /> }],
+    element: <RequireAuth />, // 🔐 AUTH GUARD
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          { path: "/admin", element: <AdminDashboard /> },
+        ],
+      },
+    ],
   },
 ]);
 
