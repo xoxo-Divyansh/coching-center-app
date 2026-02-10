@@ -1,14 +1,16 @@
+import Navbar from "../shared/Navbar";
+import Footer from "../shared/Footer";
 import { Outlet } from "react-router-dom";
-import Navbar from "../features/home/components/Navbar";
-import Footer from "../features/home/components/Footer";
 
 const MainLayout = () => {
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-black text-white">
       <Navbar />
+      <main className="flex-1">
       <Outlet />
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

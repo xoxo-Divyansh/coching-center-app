@@ -1,14 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
-const RequireAuth = () => {
+const RequireAdmin = () => {
   const { user } = useAuth();
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  if (user?.role !== "admin") {
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;
 };
 
-export default RequireAuth;
+export default RequireAdmin;
