@@ -1,14 +1,24 @@
-import { Navigate, Outlet } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../context/AuthContext";
 
-const RequireAdmin = () => {
-  const { user } = useAuth();
+const RequireAuth = () => {
+  const { user, loading } = useContext(AuthContext);
+  const location = useLocation();
 
-  if (user?.role !== "admin") {
-    return <Navigate to="/" replace />;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/auth/login" state={{ from: location }} replace />;
   }
 
   return <Outlet />;
 };
 
-export default RequireAdmin;
+export default RequireAuth;

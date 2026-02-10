@@ -37,6 +37,7 @@ const Login = () => {
       <input
         type="password"
         placeholder="Password"
+        autoComplete="current-password"
         className="w-full mb-6 p-3 rounded bg-zinc-800"
         onChange={(e) => setForm({ ...form, password: e.target.value })}
       />
