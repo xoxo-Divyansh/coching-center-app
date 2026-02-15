@@ -3,6 +3,7 @@ import { NAV_LINK } from "@/shared/navbar.config";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import ProfileMenu from "./ProfileMenu";
 
 const STATIC_NAV = [
   { label: "Home", to: "/" },
@@ -84,7 +85,9 @@ const Navbar = () => {
         </nav>
 
         {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-4">{renderLinks()}</div>
+        <div className="hidden md:flex items-center gap-4">
+          {user ? <ProfileMenu /> : renderLinks()}
+        </div>
 
         {/* Mobile Menu Button */}
         <button className="md:hidden text-white" onClick={() => setOpen(!open)}>

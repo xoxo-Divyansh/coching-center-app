@@ -12,7 +12,7 @@ const authMiddleware = asyncHandler (async (req, res, next) => {
     // 1️⃣ Get token from header (optional chaining)
     const authHeader = req.headers?.authorization;
 
-    if(!authHeader || !authHeader.startsWith("Bearer ")) {
+    if(!authHeader || !authHeader.startsWith("Bearer")) {
        throw new ApiError("Not authorized, token missing", 401);
     }
 
@@ -30,9 +30,12 @@ const authMiddleware = asyncHandler (async (req, res, next) => {
          throw new ApiError("User not found", 401);
     }
 
+    if(user.isBlocked) throw new ApiError("Your account is Blocked",403);
+
     // 5️⃣ Attach user
     req.user = user;
     next();
+
   } catch (error) {
     // JWT specific errors
     if (error.name === "JsonWebTokenError") {

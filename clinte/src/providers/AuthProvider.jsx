@@ -4,13 +4,12 @@ import { getProfile } from "../services/auth.service";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  console.log("AuthProvider mounted")
   const [loading, setLoading] = useState(true);
   
-  console.log("User:", user, "Loading:", loading)
-  const login = (token, user) => {
-    localStorage.setItem("token",token);
-    setUser(user);
+  
+  const login = (data) => {
+    localStorage.setItem("token",data.token);
+    setUser(data.user);
   };
 
   const logout = () => {

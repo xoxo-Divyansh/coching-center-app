@@ -12,17 +12,11 @@ const generateToken = (userId) => {
   });
 };
 
-// Register user
+// Register User
 export const registerUser = asyncHandler(async (req, res) => {
-  console.log("BODY 👉", req.body);
+  const { name, email, password } = req.body;
 
-  if (!req.body) {
-    throw new ApiError("Request body is missing", 400);
-  }
-
-  const { name, email, password, role } = req.body;
-
-  if (!name || !email || !password || !role) {
+  if (!name || !email || !password) {
     throw new ApiError("All fields are required", 400);
   }
 
@@ -31,14 +25,20 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError("User already exists", 400);
   }
 
-  const user = await User.create({ name, email, password, role });
+  const user = await User.create({
+    name,
+    email,
+    password,
+    role: "student",   // 🔒 force student
+    status: "active",
+  });
 
   res.status(201).json({
     success: true,
-    message: "User registered successfully",
-    token: generateToken(user._id),
+    message: "Registration successful. Please login.",
   });
 });
+
 
 // Login user
 export const loginUser = asyncHandler(async (req, res) => {
@@ -47,6 +47,9 @@ export const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email }).select("+password");
   if (!user) throw new ApiError("Invalid credentials", 401);
 
+  if (user.isBlocked) {
+  throw new ApiError("Your account is blocked. Contact admin.", 403);
+}
   const isMatch = await user.comparePassword(password);
   if (!isMatch) throw new ApiError("Invalid credentials", 401);
 
@@ -54,6 +57,16 @@ export const loginUser = asyncHandler(async (req, res) => {
     success: true,
     message: "Login successful",
     token: generateToken(user._id),
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isBlocked: user.isBlocked,
+      status: user.status,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    },
   });
 });
 

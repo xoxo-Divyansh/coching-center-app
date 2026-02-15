@@ -10,13 +10,20 @@ export const NAV_LINK = {
     { label: "Register", to: "/auth/register", type: "primary" },
   ],
 
-  user: [
+  student: [
+    { label: "Dashboard", to: "/dashboard", type: "secondary" },
+    { action: "logout" },
+  ],
+
+  teacher: [
+    { label: "Teacher Panel", to: "/teacher", type: "secondary" },
     { label: "Dashboard", to: "/dashboard", type: "secondary" },
     { action: "logout" },
   ],
 
   admin: [
     { label: "Admin Panel", to: "/admin", type: "secondary" },
+    { label: "Dashboard", to: "/dashboard", type: "secondary" },
     { action: "logout" },
   ],
 };

@@ -25,7 +25,8 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-zinc-900 p-8 rounded-xl w-96">
+   
+     <form onSubmit={handleSubmit} className="bg-zinc-900 p-8 m- rounded-xl w-96">
       <h2 className="text-2xl font-bold mb-6">Login</h2>
 
       <input
@@ -46,6 +47,7 @@ const Login = () => {
         {loading ? "Logging in..." : "Login"}
       </button>
     </form>
+   
   );
 };
 
