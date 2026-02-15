@@ -13,13 +13,12 @@ import authorize from "../middlewares/authorize.middleware.js";
 
 const router = express.Router();
 
-// 📚 Logged-in users
-router.get("/", authMiddleware, getCourses);
+// 📚 Public read routes
+router.get("/", getCourses);
+router.get("/:id", getCourseById);
 
-// 👨‍🎓 MUST be before "/:id"
+// 👨‍🎓 Protected route (must be before "/:id" when dynamic routes are protected)
 router.get("/:id/students", authMiddleware, getCourseStudents);
-
-router.get("/:id", authMiddleware, getCourseById);
 
 // 🔐 Admin only
 router.post("/", authMiddleware, authorize("admin"), createCourse);

@@ -9,8 +9,10 @@ import RoleGuard from "@/guards/RoleGuard";
 import RequireAuth from "@/guards/RequireAuth";
 
 import Home from "@/features/public/home/Home";
+import About from "@/features/public/about/About";
 import Login from "@/features/auth/Login";
 import Register from "@/features/auth/Register";
+import Courses from "@/features/courses/Courses";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import TeacherRequestsAdmin from "@/pages/admin/TeacherRequestsAdmin";
 import Dashboard from "@/pages/dashboard/Dashboard";
@@ -24,6 +26,8 @@ const router = createBrowserRouter([
     element: <PublicLayout />,
     children: [
       { path: "/", element: <Home /> },
+      { path: "/about", element: <About /> },
+      { path: "/courses", element: <Courses /> },
     ],
   },
 
