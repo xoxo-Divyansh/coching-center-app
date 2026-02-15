@@ -5,3 +5,6 @@ export const getCourses = ({ page = 1, limit = 50 } = {}) =>
 
 export const enrollInCourse = (courseId) =>
   api.post("/enrollments", { courseId });
+
+export const getCourseStudents = (courseId) =>
+  api.get(`/courses/${courseId}/students`);

@@ -49,9 +49,14 @@ export const getEnrollmentsService = async (user) => {
     filter.student = user._id;
   }
 
+  if (user.role === "teacher") {
+    const ownCourses = await Course.find({ createdBy: user._id }).select("_id");
+    filter.course = { $in: ownCourses.map((course) => course._id) };
+  }
+
   const enrollments = await Enrollment.find(filter)
     .populate("student", "name email")
-    .populate("course", "title price duration");
+    .populate("course", "title price duration createdBy");
 
   return enrollments;
 };
