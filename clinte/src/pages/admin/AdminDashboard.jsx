@@ -169,6 +169,12 @@ const AdminDashboard = () => {
         <h2 className="font-semibold mb-3">Quick Actions</h2>
         <div className="flex flex-wrap gap-3">
           <Link
+            to="/admin/users"
+            className="inline-block bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded-lg font-semibold"
+          >
+            Manage Users
+          </Link>
+          <Link
             to="/admin/teacher-requests"
             className="inline-block bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg font-semibold"
           >

@@ -15,6 +15,7 @@ import Register from "@/features/auth/Register";
 import Courses from "@/features/courses/Courses";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import TeacherRequestsAdmin from "@/pages/admin/TeacherRequestsAdmin";
+import AdminUsers from "@/pages/admin/AdminUsers";
 import Dashboard from "@/pages/dashboard/Dashboard";
 import Profile from "@/pages/profile/Profile";
 import TeacherRequestPage from "@/pages/student/TeacherRequestPage";
@@ -77,6 +78,7 @@ const router = createBrowserRouter([
             element: <AdminLayout />,
             children: [
               { path: "admin", element: <AdminDashboard /> },
+              { path: "admin/users", element: <AdminUsers /> },
               {
                 path: "admin/teacher-requests",
                 element: <TeacherRequestsAdmin />,
