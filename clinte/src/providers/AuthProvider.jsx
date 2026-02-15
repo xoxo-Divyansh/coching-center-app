@@ -17,7 +17,7 @@ const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  const loadUser = async () => {
+  const refreshUser = async () => {
   const token = localStorage.getItem("token");
   if (!token) {
     setLoading(false);
@@ -39,11 +39,20 @@ const AuthProvider = ({ children }) => {
 };
 
   useEffect(() => {
-    loadUser();
+    refreshUser();
+  }, []);
+
+  useEffect(() => {
+    const handleWindowFocus = () => {
+      refreshUser();
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+    return () => window.removeEventListener("focus", handleWindowFocus);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getTeacherRequests,
+  getMyTeacherRequest,
   requestTeacherRole,
   reviewTeacherRequest,
 } from "../controllers/teacherRequest.controller.js";
@@ -11,6 +12,7 @@ const router = express.Router();
 
 // Student submits request for teacher role
 router.post("/", authMiddleware, authorize("student"), requestTeacherRole);
+router.get("/me", authMiddleware, getMyTeacherRequest);
 
 // Admin reviews requests
 router.get("/", authMiddleware, authorize("admin"), getTeacherRequests);
