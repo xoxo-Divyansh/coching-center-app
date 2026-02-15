@@ -3,14 +3,46 @@ import ApiError from "../utils/apiError.js";
 import AuditLog from "../models/AuditLog.js";
 import User from "../models/User.js";
 import * as adminService from "../services/admin.services.js";
-import { isValidRole } from "../utils/validators.js";
+import { isValidRole, isValidUserFilterRole } from "../utils/validators.js";
+
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export const getAllUsers = asyncHandler(async (req, res) => {
-  const users = await User.find().select("-password");
+  const {
+    q = "",
+    role = "all",
+    page: rawPage = "1",
+    limit: rawLimit = "10",
+  } = req.query;
+
+  const page = Math.max(parseInt(rawPage, 10) || 1, 1);
+  const limit = Math.min(Math.max(parseInt(rawLimit, 10) || 10, 1), 100);
+  const skip = (page - 1) * limit;
+
+  const filter = {};
+  if (!isValidUserFilterRole(role)) {
+    throw new ApiError("Invalid role filter", 400);
+  }
+  if (typeof q === "string" && q.trim()) {
+    const searchRegex = new RegExp(escapeRegex(q.trim()), "i");
+    filter.$or = [{ name: searchRegex }, { email: searchRegex }];
+  }
+  if (role !== "all") {
+    filter.role = role;
+  }
+
+  const [users, total] = await Promise.all([
+    User.find(filter).select("-password").sort({ createdAt: -1 }).skip(skip).limit(limit),
+    User.countDocuments(filter),
+  ]);
 
   res.status(200).json({
     success: true,
     count: users.length,
+    total,
+    page,
+    pages: Math.ceil(total / limit) || 1,
+    limit,
     users,
   });
 });

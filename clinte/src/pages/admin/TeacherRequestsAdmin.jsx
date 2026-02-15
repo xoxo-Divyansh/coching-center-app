@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   getTeacherRequests,
   reviewTeacherRequest,
 } from "@/services/teacherRequest.service";
+import useDebouncedValue from "@/hooks/useDebouncedValue";
 
 const TeacherRequestsAdmin = () => {
   const [requests, setRequests] = useState([]);
@@ -10,21 +11,34 @@ const TeacherRequestsAdmin = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search, 300);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 10;
 
-  const loadRequests = async () => {
+  const loadRequests = useCallback(async (nextPage = 1) => {
     try {
       setLoading(true);
       setError("");
       setMessage("");
-      const res = await getTeacherRequests();
+      const res = await getTeacherRequests({
+        q: debouncedSearch,
+        status: statusFilter,
+        page: nextPage,
+        limit,
+      });
       setRequests(res.data?.requests || []);
+      setPage(res.data?.page || nextPage);
+      setPages(res.data?.pages || 1);
+      setTotal(res.data?.total || 0);
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to load requests.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [debouncedSearch, limit, statusFilter]);
 
   const handleReview = async (id, status) => {
     const shouldProceed = window.confirm(
@@ -52,7 +66,7 @@ const TeacherRequestsAdmin = () => {
     try {
       await reviewTeacherRequest(id, status);
       setMessage(`Request ${status}.`);
-      await loadRequests();
+      await loadRequests(page);
     } catch (err) {
       setRequests(previousRequests);
       setError(err?.response?.data?.message || "Failed to update request.");
@@ -60,20 +74,8 @@ const TeacherRequestsAdmin = () => {
   };
 
   useEffect(() => {
-    loadRequests();
-  }, []);
-
-  const filteredRequests = requests.filter((req) => {
-    const query = search.trim().toLowerCase();
-    const matchesSearch =
-      !query ||
-      req.user?.name?.toLowerCase().includes(query) ||
-      req.user?.email?.toLowerCase().includes(query) ||
-      req.reason?.toLowerCase().includes(query);
-    const matchesStatus =
-      statusFilter === "all" ? true : req.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+    loadRequests(1);
+  }, [loadRequests]);
 
   if (loading) {
     return <div className="text-zinc-300">Loading teacher requests...</div>;
@@ -107,7 +109,7 @@ const TeacherRequestsAdmin = () => {
           <option value="rejected">Rejected</option>
         </select>
         <button
-          onClick={loadRequests}
+          onClick={() => loadRequests(page)}
           className="border border-zinc-600 hover:bg-zinc-800 px-4 py-2 rounded-lg text-sm font-semibold"
         >
           Refresh
@@ -115,12 +117,12 @@ const TeacherRequestsAdmin = () => {
       </div>
 
       <div className="space-y-4">
-        {filteredRequests.length === 0 ? (
+        {requests.length === 0 ? (
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-zinc-300">
             No teacher requests found.
           </div>
         ) : (
-          filteredRequests.map((req) => (
+          requests.map((req) => (
             <article
               key={req._id}
               className="bg-zinc-900 border border-zinc-800 rounded-xl p-5"
@@ -170,6 +172,28 @@ const TeacherRequestsAdmin = () => {
             </article>
           ))
         )}
+      </div>
+
+      <div className="mt-4 flex items-center justify-between text-sm text-zinc-400">
+        <p>
+          Showing page {page} of {pages} ({total} total requests)
+        </p>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => loadRequests(Math.max(page - 1, 1))}
+            disabled={page <= 1}
+            className="px-3 py-1.5 rounded border border-zinc-700 disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <button
+            onClick={() => loadRequests(Math.min(page + 1, pages))}
+            disabled={page >= pages}
+            className="px-3 py-1.5 rounded border border-zinc-700 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </section>
   );

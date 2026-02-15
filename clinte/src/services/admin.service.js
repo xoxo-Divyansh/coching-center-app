@@ -4,7 +4,15 @@ export const getAdminStats = () => api.get("/admin/dashboard");
 
 export const getAdminRevenue = () => api.get("/admin/revenue");
 
-export const getAdminUsers = () => api.get("/admin/users");
+export const getAdminUsers = ({
+  q = "",
+  role = "all",
+  page = 1,
+  limit = 10,
+} = {}) =>
+  api.get("/admin/users", {
+    params: { q, role, page, limit },
+  });
 
 export const updateAdminUserRole = (userId, role) =>
   api.patch(`/admin/users/${userId}/role`, { role });

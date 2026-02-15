@@ -15,3 +15,8 @@ export const isValidRole = (role) =>
 export const isValidTeacherRequestStatus = (status) =>
   ["approved", "rejected"].includes(status);
 
+export const isValidTeacherRequestFilterStatus = (status) =>
+  ["all", "pending", "approved", "rejected"].includes(status);
+
+export const isValidUserFilterRole = (role) =>
+  ["all", "student", "teacher", "admin"].includes(role);

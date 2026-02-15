@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   deleteAdminUser,
   getAdminUsers,
   toggleAdminUserBlock,
   updateAdminUserRole,
 } from "@/services/admin.service";
+import useDebouncedValue from "@/hooks/useDebouncedValue";
 
 const ROLES = ["student", "teacher", "admin"];
 
@@ -14,43 +15,44 @@ const AdminUsers = () => {
   const [message, setMessage] = useState("");
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search, 300);
   const [roleFilter, setRoleFilter] = useState("all");
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 10;
 
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async (nextPage = 1) => {
     try {
       setLoading(true);
       setError("");
-      const res = await getAdminUsers();
+      const res = await getAdminUsers({
+        q: debouncedSearch,
+        role: roleFilter,
+        page: nextPage,
+        limit,
+      });
       setUsers(res.data?.users || []);
+      setPage(res.data?.page || nextPage);
+      setPages(res.data?.pages || 1);
+      setTotal(res.data?.total || 0);
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to load users.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [debouncedSearch, limit, roleFilter]);
 
   useEffect(() => {
-    loadUsers();
-  }, []);
-
-  const filteredUsers = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return users.filter((user) => {
-      const matchesSearch =
-        !q ||
-        user.name?.toLowerCase().includes(q) ||
-        user.email?.toLowerCase().includes(q);
-      const matchesRole = roleFilter === "all" || user.role === roleFilter;
-      return matchesSearch && matchesRole;
-    });
-  }, [users, search, roleFilter]);
+    loadUsers(1);
+  }, [loadUsers]);
 
   const handleRoleUpdate = async (userId, role) => {
     try {
       setMessage("");
       await updateAdminUserRole(userId, role);
       setMessage("User role updated.");
-      await loadUsers();
+      await loadUsers(page);
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to update role.");
     }
@@ -61,7 +63,7 @@ const AdminUsers = () => {
       setMessage("");
       await toggleAdminUserBlock(userId);
       setMessage("User block status updated.");
-      await loadUsers();
+      await loadUsers(page);
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to update block status.");
     }
@@ -77,7 +79,7 @@ const AdminUsers = () => {
       setMessage("");
       await deleteAdminUser(userId);
       setMessage("User deleted.");
-      await loadUsers();
+      await loadUsers(page);
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to delete user.");
     }
@@ -123,7 +125,7 @@ const AdminUsers = () => {
           <option value="admin">Admin</option>
         </select>
         <button
-          onClick={loadUsers}
+          onClick={() => loadUsers(page)}
           className="border border-zinc-600 hover:bg-zinc-800 px-4 py-2 rounded-lg text-sm font-semibold"
         >
           Refresh
@@ -142,7 +144,7 @@ const AdminUsers = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user) => (
+            {users.map((user) => (
               <tr key={user._id} className="border-b border-zinc-800/60">
                 <td className="py-2 pr-3">{user.name}</td>
                 <td className="py-2 pr-3 text-zinc-300">{user.email}</td>
@@ -184,7 +186,7 @@ const AdminUsers = () => {
                 </td>
               </tr>
             ))}
-            {filteredUsers.length === 0 && (
+            {users.length === 0 && (
               <tr>
                 <td className="py-4 text-zinc-400" colSpan={5}>
                   No users found for current filters.
@@ -193,6 +195,28 @@ const AdminUsers = () => {
             )}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between text-sm text-zinc-400">
+        <p>
+          Showing page {page} of {pages} ({total} total users)
+        </p>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => loadUsers(Math.max(page - 1, 1))}
+            disabled={page <= 1}
+            className="px-3 py-1.5 rounded border border-zinc-700 disabled:opacity-50"
+          >
+            Prev
+          </button>
+          <button
+            onClick={() => loadUsers(Math.min(page + 1, pages))}
+            disabled={page >= pages}
+            className="px-3 py-1.5 rounded border border-zinc-700 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </section>
   );

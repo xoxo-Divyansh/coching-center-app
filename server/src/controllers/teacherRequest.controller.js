@@ -5,8 +5,11 @@ import User from "../models/User.js";
 import AuditLog from "../models/AuditLog.js";
 import {
   isNonEmptyString,
+  isValidTeacherRequestFilterStatus,
   isValidTeacherRequestStatus,
 } from "../utils/validators.js";
+
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // 🧑‍🎓 Student → Request teacher role
 export const requestTeacherRole = asyncHandler(async (req, res) => {
@@ -67,13 +70,66 @@ export const getMyTeacherRequest = asyncHandler(async (req, res) => {
 
 // 🛡 Admin → Get all teacher requests
 export const getTeacherRequests = asyncHandler(async (req, res) => {
-  const requests = await TeacherRequest.find()
-    .populate("user", "name email role")
-    .sort({ createdAt: -1 });
+  const {
+    q = "",
+    status = "all",
+    page: rawPage = "1",
+    limit: rawLimit = "10",
+  } = req.query;
+
+  const page = Math.max(parseInt(rawPage, 10) || 1, 1);
+  const limit = Math.min(Math.max(parseInt(rawLimit, 10) || 10, 1), 100);
+  const skip = (page - 1) * limit;
+
+  const filter = {};
+  if (!isValidTeacherRequestFilterStatus(status)) {
+    throw new ApiError("Invalid status filter", 400);
+  }
+  if (status !== "all") {
+    filter.status = status;
+  }
+
+  let requests = [];
+  let total = 0;
+
+  if (typeof q === "string" && q.trim()) {
+    const searchRegex = new RegExp(escapeRegex(q.trim()), "i");
+
+    const allFiltered = await TeacherRequest.find(filter)
+      .populate("user", "name email role")
+      .sort({ createdAt: -1 });
+
+    const matched = allFiltered.filter(
+      (item) =>
+        item.user &&
+        (searchRegex.test(item.user?.name || "") ||
+          searchRegex.test(item.user?.email || "") ||
+          searchRegex.test(item.reason || "")),
+    );
+
+    total = matched.length;
+    requests = matched.slice(skip, skip + limit);
+  } else {
+    const [paged, totalRaw] = await Promise.all([
+      TeacherRequest.find(filter)
+        .populate("user", "name email role")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      TeacherRequest.countDocuments(filter),
+    ]);
+
+    requests = paged;
+    total = totalRaw;
+  }
 
   res.status(200).json({
     success: true,
     count: requests.length,
+    total,
+    page,
+    pages: Math.ceil(total / limit) || 1,
+    limit,
     requests,
   });
 });
