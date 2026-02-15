@@ -5,6 +5,7 @@ import {
   getAdminStats,
   getAdminUsers,
 } from "@/services/admin.service";
+import { getTeacherRequests } from "@/services/teacherRequest.service";
 
 const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -12,21 +13,27 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [revenue, setRevenue] = useState(null);
   const [users, setUsers] = useState([]);
+  const [pendingTeacherRequests, setPendingTeacherRequests] = useState(0);
 
   const loadDashboard = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const [statsRes, revenueRes, usersRes] = await Promise.all([
+      const [statsRes, revenueRes, usersRes, teacherRequestRes] = await Promise.all([
         getAdminStats(),
         getAdminRevenue(),
         getAdminUsers(),
+        getTeacherRequests(),
       ]);
 
       setStats(statsRes.data?.stats || {});
       setRevenue(revenueRes.data?.revenue || {});
       setUsers(usersRes.data?.users || []);
+      const teacherRequests = teacherRequestRes.data?.requests || [];
+      setPendingTeacherRequests(
+        teacherRequests.filter((req) => req.status === "pending").length,
+      );
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to load admin dashboard.");
     } finally {
@@ -87,6 +94,10 @@ const AdminDashboard = () => {
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
           <p className="text-zinc-400 text-sm">Enrollments</p>
           <p className="text-2xl font-bold mt-1">{stats?.enrollments ?? 0}</p>
+        </div>
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+          <p className="text-zinc-400 text-sm">Pending Teacher Requests</p>
+          <p className="text-2xl font-bold mt-1">{pendingTeacherRequests}</p>
         </div>
       </div>
 
