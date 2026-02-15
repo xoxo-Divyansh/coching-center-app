@@ -2,34 +2,37 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/apiError.js";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
+import {
+  isNonEmptyString,
+  isValidEmail,
+  isValidPassword,
+} from "../utils/validators.js";
 
-// Helper to create JWT token
 const generateToken = (userId) => {
-  console.log("SIGN SECRET 👉", process.env.JWT_SECRET);//
-
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
 };
 
-// Register User
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  if (!name || !email || !password) {
-    throw new ApiError("All fields are required", 400);
+  if (!isNonEmptyString(name, 2) || !isValidEmail(email) || !isValidPassword(password)) {
+    throw new ApiError("Invalid registration payload", 400);
   }
 
-  const existingUser = await User.findOne({ email });
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const existingUser = await User.findOne({ email: normalizedEmail });
   if (existingUser) {
     throw new ApiError("User already exists", 400);
   }
 
-  const user = await User.create({
-    name,
-    email,
+  await User.create({
+    name: name.trim(),
+    email: normalizedEmail,
     password,
-    role: "student",   // 🔒 force student
+    role: "student",
     status: "active",
   });
 
@@ -39,17 +42,21 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 });
 
-
-// Login user
 export const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email }).select("+password");
+  if (!isValidEmail(email) || !isValidPassword(password)) {
+    throw new ApiError("Invalid credentials", 401);
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const user = await User.findOne({ email: normalizedEmail }).select("+password");
   if (!user) throw new ApiError("Invalid credentials", 401);
 
   if (user.isBlocked) {
-  throw new ApiError("Your account is blocked. Contact admin.", 403);
-}
+    throw new ApiError("Your account is blocked. Contact admin.", 403);
+  }
+
   const isMatch = await user.comparePassword(password);
   if (!isMatch) throw new ApiError("Invalid credentials", 401);
 
@@ -70,7 +77,6 @@ export const loginUser = asyncHandler(async (req, res) => {
   });
 });
 
-// ✅ Get logged-in user
 export const getMe = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,

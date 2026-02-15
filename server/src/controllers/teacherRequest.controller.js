@@ -3,14 +3,19 @@ import ApiError from "../utils/apiError.js";
 import TeacherRequest from "../models/TeacherRequest.js";
 import User from "../models/User.js";
 import AuditLog from "../models/AuditLog.js";
+import {
+  isNonEmptyString,
+  isValidTeacherRequestStatus,
+} from "../utils/validators.js";
 
 // 🧑‍🎓 Student → Request teacher role
 export const requestTeacherRole = asyncHandler(async (req, res) => {
   const { reason } = req.body;
 
-  if (!reason) {
-    throw new ApiError("Reason is required", 400);
+  if (!isNonEmptyString(reason, 10)) {
+    throw new ApiError("Reason must be at least 10 characters", 400);
   }
+  const normalizedReason = reason.trim();
 
   const existingRequest = await TeacherRequest.findOne({ user: req.user._id });
 
@@ -23,7 +28,7 @@ export const requestTeacherRole = asyncHandler(async (req, res) => {
   }
 
   if (existingRequest?.status === "rejected") {
-    existingRequest.reason = reason;
+    existingRequest.reason = normalizedReason;
     existingRequest.status = "pending";
     existingRequest.reviewedBy = undefined;
     existingRequest.reviewedAt = undefined;
@@ -38,7 +43,7 @@ export const requestTeacherRole = asyncHandler(async (req, res) => {
 
   const request = await TeacherRequest.create({
     user: req.user._id,
-    reason,
+    reason: normalizedReason,
   });
 
   res.status(201).json({
@@ -77,7 +82,7 @@ export const getTeacherRequests = asyncHandler(async (req, res) => {
 export const reviewTeacherRequest = asyncHandler(async (req, res) => {
   const { status } = req.body;
 
-  if (!["approved", "rejected"].includes(status)) {
+  if (!isValidTeacherRequestStatus(status)) {
     throw new ApiError("Invalid status", 400);
   }
 

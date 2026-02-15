@@ -3,12 +3,8 @@ import ApiError from "../utils/apiError.js";
 import AuditLog from "../models/AuditLog.js";
 import User from "../models/User.js";
 import * as adminService from "../services/admin.services.js";
+import { isValidRole } from "../utils/validators.js";
 
-// ===============================
-// 👥 USER MANAGEMENT
-// ===============================
-
-// Get All Users
 export const getAllUsers = asyncHandler(async (req, res) => {
   const users = await User.find().select("-password");
 
@@ -19,9 +15,11 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   });
 });
 
-// 🔁 Update User Role
 export const updateUserRole = asyncHandler(async (req, res) => {
   const { role } = req.body;
+  if (!isValidRole(role)) {
+    throw new ApiError("Invalid role", 400);
+  }
 
   const user = await User.findById(req.params.id);
   if (!user) throw new ApiError("User not found", 404);
@@ -29,12 +27,12 @@ export const updateUserRole = asyncHandler(async (req, res) => {
   user.role = role;
   await user.save();
 
-  // 🧾 Audit Log
   await AuditLog.create({
     admin: req.user._id,
-    action: "UPDATE_ROLE",
-    target: user._id,
-    metadata: { role },
+    action: "UPDATE",
+    entity: "User",
+    entityId: user._id,
+    metadata: { updateType: "role", role },
   });
 
   res.status(200).json({
@@ -44,7 +42,6 @@ export const updateUserRole = asyncHandler(async (req, res) => {
   });
 });
 
-// 🚫 Block / Unblock User
 export const toggleBlockUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) throw new ApiError("User not found", 404);
@@ -52,11 +49,15 @@ export const toggleBlockUser = asyncHandler(async (req, res) => {
   user.isBlocked = !user.isBlocked;
   await user.save();
 
-  // 🧾 Audit Log
   await AuditLog.create({
     admin: req.user._id,
-    action: user.isBlocked ? "USER_BLOCKED" : "USER_UNBLOCKED",
-    target: user._id,
+    action: "UPDATE",
+    entity: "User",
+    entityId: user._id,
+    metadata: {
+      updateType: "block_status",
+      isBlocked: user.isBlocked,
+    },
   });
 
   res.status(200).json({
@@ -65,18 +66,18 @@ export const toggleBlockUser = asyncHandler(async (req, res) => {
   });
 });
 
-// ❌ Delete User
 export const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) throw new ApiError("User not found", 404);
 
   await user.deleteOne();
 
-  // 🧾 Audit Log
   await AuditLog.create({
     admin: req.user._id,
-    action: "DELETE_USER",
-    target: user._id,
+    action: "DELETE",
+    entity: "User",
+    entityId: user._id,
+    metadata: { deleteType: "user" },
   });
 
   res.status(200).json({
@@ -84,10 +85,6 @@ export const deleteUser = asyncHandler(async (req, res) => {
     message: "User deleted",
   });
 });
-
-// ===============================
-// 📊 ADMIN DASHBOARD (FUTURE)
-// ===============================
 
 export const getAdminStats = asyncHandler(async (req, res) => {
   if (req.user.role !== "admin") {

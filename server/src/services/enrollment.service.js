@@ -62,6 +62,10 @@ export const updateEnrollmentStatusService = async (
   status,
   user
 ) => {
+  if (!["enrolled", "completed", "cancelled"].includes(status)) {
+    throw new ApiError("Invalid enrollment status", 400);
+  }
+
   if (!mongoose.Types.ObjectId.isValid(enrollmentId)) {
     throw new ApiError("Invalid enrollment ID", 400);
   }
