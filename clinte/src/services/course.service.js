@@ -8,3 +8,10 @@ export const enrollInCourse = (courseId) =>
 
 export const getCourseStudents = (courseId) =>
   api.get(`/courses/${courseId}/students`);
+
+export const createCourse = (payload) => api.post("/courses", payload);
+
+export const updateCourse = (courseId, payload) =>
+  api.put(`/courses/${courseId}`, payload);
+
+export const deleteCourse = (courseId) => api.delete(`/courses/${courseId}`);

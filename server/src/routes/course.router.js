@@ -21,8 +21,8 @@ router.get("/:id", getCourseById);
 router.get("/:id/students", authMiddleware, getCourseStudents);
 
 // 🔐 Admin only
-router.post("/", authMiddleware, authorize("admin"), createCourse);
-router.put("/:id", authMiddleware, authorize("admin"), updateCourse);
-router.delete("/:id", authMiddleware, authorize("admin"), deleteCourse);
+router.post("/", authMiddleware, authorize("admin", "teacher"), createCourse);
+router.put("/:id", authMiddleware, authorize("admin", "teacher"), updateCourse);
+router.delete("/:id", authMiddleware, authorize("admin", "teacher"), deleteCourse);
 
 export default router;

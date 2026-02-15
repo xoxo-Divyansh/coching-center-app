@@ -20,6 +20,7 @@ import Dashboard from "@/pages/dashboard/Dashboard";
 import Profile from "@/pages/profile/Profile";
 import TeacherRequestPage from "@/pages/student/TeacherRequestPage";
 import TeacherDashboard from "@/pages/teacher/TeacherDashboard";
+import TeacherCourses from "@/pages/teacher/TeacherCourses";
 
 const router = createBrowserRouter([
   // 🌍 Public Pages (Navbar + Footer)
@@ -58,7 +59,10 @@ const router = createBrowserRouter([
         children: [
           {
             element: <MainLayout />,
-            children: [{ path: "teacher", element: <TeacherDashboard /> }],
+            children: [
+              { path: "teacher", element: <TeacherDashboard /> },
+              { path: "teacher/courses", element: <TeacherCourses /> },
+            ],
           },
         ],
       },

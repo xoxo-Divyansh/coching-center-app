@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
 import { getCourses, getCourseStudents } from "@/services/course.service";
 import {
@@ -93,6 +94,14 @@ const TeacherDashboard = () => {
       <p className="text-zinc-400">
         Manage courses and student enrollments from one place.
       </p>
+      <div className="mt-4">
+        <Link
+          to="/teacher/courses"
+          className="inline-block bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg font-semibold"
+        >
+          Manage My Courses
+        </Link>
+      </div>
 
       {error && (
         <div className="mt-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-300">

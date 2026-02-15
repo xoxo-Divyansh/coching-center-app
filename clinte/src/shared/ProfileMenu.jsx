@@ -45,9 +45,14 @@ const ProfileMenu = () => {
             )}
 
             {user.role === "teacher" && (
-              <Link to="/teacher" className="dropdown-item">
-                <LayoutDashboard size={16} /> Teacher Panel
-              </Link>
+              <>
+                <Link to="/teacher" className="dropdown-item">
+                  <LayoutDashboard size={16} /> Teacher Panel
+                </Link>
+                <Link to="/teacher/courses" className="dropdown-item">
+                  <LayoutDashboard size={16} /> My Courses
+                </Link>
+              </>
             )}
 
             {user.role === "admin" && (
