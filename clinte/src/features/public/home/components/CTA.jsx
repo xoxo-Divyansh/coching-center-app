@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 
 const CTA = () => {
   return (
-    <section className="py-24 px-6 bg-purple-400 text-black text-center">
-      <h2 className="text-3xl md:text-4xl font-bold">
+    <section className="py-24 px-6 bg-neutral-500 text-black text-center leading-loose">
+      <h2 className="text-3xl md:text-5xl font-bold">
         Digitize Your Coaching Institute Today
       </h2>
 
-      <p className="mt-4 text-lg">
+      <p className="mt-4 text-lg text-zinc-200">
         Start managing students, batches, payments and learning all in one place.
       </p>
 

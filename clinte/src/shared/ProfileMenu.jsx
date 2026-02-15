@@ -38,6 +38,12 @@ const ProfileMenu = () => {
               <User size={16} /> Profile
             </Link>
 
+            {user.role === "student" && (
+              <Link to="/teacher-request" className="dropdown-item">
+                <LayoutDashboard size={16} /> Become Teacher
+              </Link>
+            )}
+
             {user.role === "teacher" && (
               <Link to="/teacher" className="dropdown-item">
                 <LayoutDashboard size={16} /> Teacher Panel
@@ -45,9 +51,14 @@ const ProfileMenu = () => {
             )}
 
             {user.role === "admin" && (
-              <Link to="/admin" className="dropdown-item">
-                <Shield size={16} /> Admin Panel
-              </Link>
+              <>
+                <Link to="/admin" className="dropdown-item">
+                  <Shield size={16} /> Admin Panel
+                </Link>
+                <Link to="/admin/teacher-requests" className="dropdown-item">
+                  <Shield size={16} /> Teacher Requests
+                </Link>
+              </>
             )}
 
             <button

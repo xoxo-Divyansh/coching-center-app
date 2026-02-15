@@ -12,8 +12,10 @@ import Home from "@/features/public/home/Home";
 import Login from "@/features/auth/Login";
 import Register from "@/features/auth/Register";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
+import TeacherRequestsAdmin from "@/pages/admin/TeacherRequestsAdmin";
 import Dashboard from "@/pages/dashboard/Dashboard";
 import Profile from "@/pages/profile/Profile";
+import TeacherRequestPage from "@/pages/student/TeacherRequestPage";
 import TeacherDashboard from "@/pages/teacher/TeacherDashboard";
 
 const router = createBrowserRouter([
@@ -56,12 +58,25 @@ const router = createBrowserRouter([
         ],
       },
       {
+        element: <RoleGuard allowedRoles={["student"]} />,
+        children: [
+          {
+            element: <MainLayout />,
+            children: [{ path: "teacher-request", element: <TeacherRequestPage /> }],
+          },
+        ],
+      },
+      {
         element: <RoleGuard allowedRoles={["admin"]} />,
         children: [
           {
             element: <AdminLayout />,
             children: [
               { path: "admin", element: <AdminDashboard /> },
+              {
+                path: "admin/teacher-requests",
+                element: <TeacherRequestsAdmin />,
+              },
             ],
           },
         ],

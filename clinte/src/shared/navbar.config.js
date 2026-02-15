@@ -12,6 +12,7 @@ export const NAV_LINK = {
 
   student: [
     { label: "Dashboard", to: "/dashboard", type: "secondary" },
+    { label: "Become Teacher", to: "/teacher-request", type: "secondary" },
     { action: "logout" },
   ],
 
@@ -23,6 +24,7 @@ export const NAV_LINK = {
 
   admin: [
     { label: "Admin Panel", to: "/admin", type: "secondary" },
+    { label: "Teacher Requests", to: "/admin/teacher-requests", type: "secondary" },
     { label: "Dashboard", to: "/dashboard", type: "secondary" },
     { action: "logout" },
   ],
