@@ -1,0 +1,681 @@
+{
+   "info": {
+      "name": "Coaching Center App API",
+      "_postman_id": "4a5c87f4-9b8d-4d7f-a174-cc8a4f7f28c1",
+      "description": "Ready Postman collection for Coaching Center App (auth, admin, teacher requests, courses, enrollments).",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+   },
+   "variable": [
+      {
+         "key": "baseUrl",
+         "value": "http://localhost:5000/api"
+      },
+      {
+         "key": "token",
+         "value": ""
+      },
+      {
+         "key": "userId",
+         "value": ""
+      },
+      {
+         "key": "courseId",
+         "value": ""
+      },
+      {
+         "key": "enrollmentId",
+         "value": ""
+      },
+      {
+         "key": "teacherRequestId",
+         "value": ""
+      }
+   ],
+   "item": [
+      {
+         "name": "Auth",
+         "item": [
+            {
+               "name": "Register",
+               "request": {
+                  "method": "POST",
+                  "header": [
+                     {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                     }
+                  ],
+                  "body": {
+                     "mode": "raw",
+                     "raw": "{\n  \"name\": \"xoxo\",\n  \"email\": \"xo@gmail.com\",\n  \"password\": \"123456\"\n}"
+                  },
+                  "url": {
+                     "raw": "{{baseUrl}}/auth/register",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "auth",
+                        "register"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Login",
+               "event": [
+                  {
+                     "listen": "test",
+                     "script": {
+                        "exec": [
+                           "const json = pm.response.json();",
+                           "if (json.token) pm.collectionVariables.set('token', json.token);",
+                           "if (json.user && json.user._id) pm.collectionVariables.set('userId', json.user._id);"
+                        ],
+                        "type": "text/javascript"
+                     }
+                  }
+               ],
+               "request": {
+                  "method": "POST",
+                  "header": [
+                     {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                     }
+                  ],
+                  "body": {
+                     "mode": "raw",
+                     "raw": "{\n  \"email\": \"xo@gmail.com\",\n  \"password\": \"123456\"\n}"
+                  },
+                  "url": {
+                     "raw": "{{baseUrl}}/auth/login",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "auth",
+                        "login"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Get Me",
+               "request": {
+                  "method": "GET",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/auth/me",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "auth",
+                        "me"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Admin Test",
+               "request": {
+                  "method": "GET",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/auth/admin-test",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "auth",
+                        "admin-test"
+                     ]
+                  }
+               }
+            }
+         ]
+      },
+      {
+         "name": "Teacher Requests",
+         "item": [
+            {
+               "name": "Submit Teacher Request (Student)",
+               "request": {
+                  "method": "POST",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     },
+                     {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                     }
+                  ],
+                  "body": {
+                     "mode": "raw",
+                     "raw": "{\n  \"reason\": \"I have teaching experience and want to manage courses for my batch.\"\n}"
+                  },
+                  "url": {
+                     "raw": "{{baseUrl}}/teacher-requests",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "teacher-requests"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "My Teacher Request Status",
+               "request": {
+                  "method": "GET",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/teacher-requests/me",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "teacher-requests",
+                        "me"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "List Teacher Requests (Admin)",
+               "event": [
+                  {
+                     "listen": "test",
+                     "script": {
+                        "exec": [
+                           "const json = pm.response.json();",
+                           "if (json.requests && json.requests.length) pm.collectionVariables.set('teacherRequestId', json.requests[0]._id);"
+                        ],
+                        "type": "text/javascript"
+                     }
+                  }
+               ],
+               "request": {
+                  "method": "GET",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/teacher-requests",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "teacher-requests"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Review Teacher Request (Admin)",
+               "request": {
+                  "method": "PATCH",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     },
+                     {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                     }
+                  ],
+                  "body": {
+                     "mode": "raw",
+                     "raw": "{\n  \"status\": \"approved\"\n}"
+                  },
+                  "url": {
+                     "raw": "{{baseUrl}}/teacher-requests/{{teacherRequestId}}/review",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "teacher-requests",
+                        "{{teacherRequestId}}",
+                        "review"
+                     ]
+                  }
+               }
+            }
+         ]
+      },
+      {
+         "name": "Admin",
+         "item": [
+            {
+               "name": "Dashboard Stats",
+               "request": {
+                  "method": "GET",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/admin/dashboard",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "admin",
+                        "dashboard"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Revenue Stats",
+               "request": {
+                  "method": "GET",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/admin/revenue",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "admin",
+                        "revenue"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Get All Users",
+               "event": [
+                  {
+                     "listen": "test",
+                     "script": {
+                        "exec": [
+                           "const json = pm.response.json();",
+                           "if (json.users && json.users.length) pm.collectionVariables.set('userId', json.users[0]._id);"
+                        ],
+                        "type": "text/javascript"
+                     }
+                  }
+               ],
+               "request": {
+                  "method": "GET",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/admin/users",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "admin",
+                        "users"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Update User Role",
+               "request": {
+                  "method": "PATCH",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     },
+                     {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                     }
+                  ],
+                  "body": {
+                     "mode": "raw",
+                     "raw": "{\n  \"role\": \"teacher\"\n}"
+                  },
+                  "url": {
+                     "raw": "{{baseUrl}}/admin/users/{{userId}}/role",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "admin",
+                        "users",
+                        "{{userId}}",
+                        "role"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Toggle Block User",
+               "request": {
+                  "method": "PATCH",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/admin/users/{{userId}}/block",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "admin",
+                        "users",
+                        "{{userId}}",
+                        "block"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Delete User",
+               "request": {
+                  "method": "DELETE",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/admin/users/{{userId}}",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "admin",
+                        "users",
+                        "{{userId}}"
+                     ]
+                  }
+               }
+            }
+         ]
+      },
+      {
+         "name": "Courses",
+         "item": [
+            {
+               "name": "Get Courses",
+               "event": [
+                  {
+                     "listen": "test",
+                     "script": {
+                        "exec": [
+                           "const json = pm.response.json();",
+                           "if (json.course && json.course.length) pm.collectionVariables.set('courseId', json.course[0]._id);"
+                        ],
+                        "type": "text/javascript"
+                     }
+                  }
+               ],
+               "request": {
+                  "method": "GET",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/courses?page=1&limit=10",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "courses"
+                     ],
+                     "query": [
+                        {
+                           "key": "page",
+                           "value": "1"
+                        },
+                        {
+                           "key": "limit",
+                           "value": "10"
+                        }
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Get Course By ID",
+               "request": {
+                  "method": "GET",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/courses/{{courseId}}",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "courses",
+                        "{{courseId}}"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Create Course (Admin)",
+               "request": {
+                  "method": "POST",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     },
+                     {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                     }
+                  ],
+                  "body": {
+                     "mode": "raw",
+                     "raw": "{\n  \"title\": \"Physics 101\",\n  \"description\": \"Foundation physics course\",\n  \"price\": 1500,\n  \"duration\": \"3 months\",\n  \"level\": \"beginner\"\n}"
+                  },
+                  "url": {
+                     "raw": "{{baseUrl}}/courses",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "courses"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Update Course (Admin)",
+               "request": {
+                  "method": "PUT",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     },
+                     {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                     }
+                  ],
+                  "body": {
+                     "mode": "raw",
+                     "raw": "{\n  \"price\": 2000,\n  \"duration\": \"4 months\"\n}"
+                  },
+                  "url": {
+                     "raw": "{{baseUrl}}/courses/{{courseId}}",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "courses",
+                        "{{courseId}}"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Delete Course (Admin)",
+               "request": {
+                  "method": "DELETE",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/courses/{{courseId}}",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "courses",
+                        "{{courseId}}"
+                     ]
+                  }
+               }
+            }
+         ]
+      },
+      {
+         "name": "Enrollments",
+         "item": [
+            {
+               "name": "Enroll in Course (Student)",
+               "request": {
+                  "method": "POST",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     },
+                     {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                     }
+                  ],
+                  "body": {
+                     "mode": "raw",
+                     "raw": "{\n  \"courseId\": \"{{courseId}}\"\n}"
+                  },
+                  "url": {
+                     "raw": "{{baseUrl}}/enrollments",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "enrollments"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Get Enrollments",
+               "event": [
+                  {
+                     "listen": "test",
+                     "script": {
+                        "exec": [
+                           "const json = pm.response.json();",
+                           "if (json.enrollments && json.enrollments.length) pm.collectionVariables.set('enrollmentId', json.enrollments[0]._id);"
+                        ],
+                        "type": "text/javascript"
+                     }
+                  }
+               ],
+               "request": {
+                  "method": "GET",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     }
+                  ],
+                  "url": {
+                     "raw": "{{baseUrl}}/enrollments",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "enrollments"
+                     ]
+                  }
+               }
+            },
+            {
+               "name": "Update Enrollment Status (Admin/Teacher)",
+               "request": {
+                  "method": "PATCH",
+                  "header": [
+                     {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                     },
+                     {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                     }
+                  ],
+                  "body": {
+                     "mode": "raw",
+                     "raw": "{\n  \"status\": \"completed\"\n}"
+                  },
+                  "url": {
+                     "raw": "{{baseUrl}}/enrollments/{{enrollmentId}}/status",
+                     "host": [
+                        "{{baseUrl}}"
+                     ],
+                     "path": [
+                        "enrollments",
+                        "{{enrollmentId}}",
+                        "status"
+                     ]
+                  }
+               }
+            }
+         ]
+      }
+   ]
+}

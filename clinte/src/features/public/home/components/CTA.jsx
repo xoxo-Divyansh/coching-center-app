@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 
 const CTA = () => {
   return (
-    <section className="py-24 px-6 bg-neutral-500 text-black text-center leading-loose">
+    <section className="py-24 px-6 bg-[#5C5C6C] text-black text-center leading-loose">
       <h2 className="text-3xl md:text-5xl font-bold">
         Digitize Your Coaching Institute Today
       </h2>
 
-      <p className="mt-4 text-lg text-zinc-200">
+      <p className="mt-4 text-lg text-zinc-300">
         Start managing students, batches, payments and learning all in one place.
       </p>
 
@@ -21,7 +21,7 @@ const CTA = () => {
 
         <Link
           to="/auth/login"
-          className="border border-black px-10 py-3 rounded-xl font-semibold hover:bg-black/10 transition"
+          className="border border-black px-10 py-3 rounded-xl font-semibold hover:bg-white/6 0 transition"
         >
           Login
         </Link>
