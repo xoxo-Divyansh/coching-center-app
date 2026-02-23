@@ -5,7 +5,7 @@ import {
   Dashboards,
   Pricing,
   CTA,
-} from "./components";
+} from "../components";
 
 const Home = () => {
   return (
