@@ -85,19 +85,19 @@ const Attendance = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 bg-white rounded-xl shadow">
+    <div className="max-w-5xl mx-auto p-6 bg-zinc-900 border border-zinc-800 rounded-xl shadow text-zinc-100">
       <h1 className="text-2xl font-semibold mb-6">Mark Attendance</h1>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div>
-          <label className="block text-sm font-medium mb-1">Batch</label>
+          <label className="block text-sm font-medium mb-1 text-zinc-300">Batch</label>
           <select
             value={batchId}
             onChange={(e) => {
               setBatchId(e.target.value);
               fetchStudents(e.target.value);
             }}
-            className="w-full border rounded-lg px-3 py-2"
+            className="w-full border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg px-3 py-2"
           >
             <option value="">Select Batch</option>
             {batches.map((b) => (
@@ -109,20 +109,26 @@ const Attendance = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Date</label>
+          <label className="block text-sm font-medium mb-1 text-zinc-300">Date</label>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full border rounded-lg px-3 py-2"
+            className="w-full border border-zinc-700 bg-zinc-800 text-zinc-100 rounded-lg px-3 py-2"
           />
         </div>
       </div>
 
+      {batches.length === 0 && (
+        <div className="mb-6 rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3 text-sm text-zinc-300">
+          No batches assigned yet. Ask admin to assign you to a batch.
+        </div>
+      )}
+
       {students.length > 0 && (
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border border-zinc-800 rounded-lg overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-100">
+            <thead className="bg-zinc-800 text-zinc-300">
               <tr>
                 <th className="text-left px-4 py-2">Student</th>
                 <th className="text-center px-4 py-2">Status</th>
@@ -131,7 +137,7 @@ const Attendance = () => {
 
             <tbody>
               {students.map((s) => (
-                <tr key={s._id} className="border-t">
+                <tr key={s._id} className="border-t border-zinc-800">
                   <td className="px-4 py-2">
                     {s.name || s.fullName || s.email}
                   </td>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
 import { getCourses, getCourseStudents } from "@/services/course.service";
@@ -16,7 +16,7 @@ const TeacherDashboard = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [studentsByCourse, setStudentsByCourse] = useState({});
 
-  const loadTeacherData = async () => {
+  const loadTeacherData = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
@@ -56,11 +56,11 @@ const TeacherDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     loadTeacherData();
-  }, [user?._id, user?.role]);
+  }, [loadTeacherData]);
 
   const completedCount = useMemo(
     () =>

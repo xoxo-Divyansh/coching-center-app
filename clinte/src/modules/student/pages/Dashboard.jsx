@@ -1,5 +1,5 @@
 import useAuth from "@/hooks/useAuth";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getEnrollments } from "@/services/enrollment.service";
 import { getCourses } from "@/services/course.service";
 
@@ -10,7 +10,7 @@ const Dashboard = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [courses, setCourses] = useState([]);
 
-  const loadDashboard = async () => {
+  const loadDashboard = useCallback(async () => {
     if (!user || user.role !== "student") {
       setLoading(false);
       return;
@@ -32,11 +32,11 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     loadDashboard();
-  }, [user?._id, user?.role]);
+  }, [loadDashboard]);
 
   const enrolledCourseIds = useMemo(() => {
     return new Set(

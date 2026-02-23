@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
 import {
@@ -16,7 +16,7 @@ const TeacherRequestPage = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const loadStatus = async () => {
+  const loadStatus = useCallback(async () => {
     try {
       setLoadingStatus(true);
       const res = await getMyTeacherRequest();
@@ -32,13 +32,13 @@ const TeacherRequestPage = () => {
     } finally {
       setLoadingStatus(false);
     }
-  };
+  }, [refreshUser]);
 
   useEffect(() => {
     loadStatus();
     const interval = setInterval(loadStatus, 15000);
     return () => clearInterval(interval);
-  }, []);
+  }, [loadStatus]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

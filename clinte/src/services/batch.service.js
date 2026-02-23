@@ -8,8 +8,17 @@ export const getAllBatches = async () => {
 
 // Get batches assigned to logged-in teacher
 export const getTeacherBatches = async () => {
-  const { data } = await api.get("/batches/teacher/my");
-  return data.data;
+  try {
+    const { data } = await api.get("/batches/teacher/my");
+    return data.data;
+  } catch (error) {
+    // Admin users can access teacher panel routes; fallback to admin batches API.
+    if (error?.response?.status === 403) {
+      const { data } = await api.get("/batches");
+      return data.data;
+    }
+    throw error;
+  }
 };
 
 // 🔹 Create batch (Admin)
