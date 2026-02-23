@@ -1,6 +1,6 @@
 import * as batchService from "../services/batch.service.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
-import { ApiResponse } from "../utils/apiResponse.js";
+import {asyncHandler} from "../utils/asyncHandler.js";
+import {ApiResponse} from "../utils/apiResponse.js";
 
 /**
  * @desc    Create new batch
@@ -102,5 +102,19 @@ export const getBatchById = asyncHandler(async (req, res) => {
 
   res.status(200).json(
     new ApiResponse(200, batch, "Batch fetched successfully")
+  );
+});
+
+/**
+ * @desc    Get batch students
+ * @route   GET /api/batches/:id/students
+ * @access  Admin | Teacher | Student
+ */
+export const getBatchStudents = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const students = await batchService.getBatchStudents(id);
+
+  res.status(200).json(
+    new ApiResponse(200, students, "Batch students fetched successfully")
   );
 });

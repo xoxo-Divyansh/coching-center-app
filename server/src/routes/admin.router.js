@@ -17,21 +17,21 @@ const router = express.Router();
 router.use(authMiddleware, authorize("admin"));
 
 // 👥 User Management
-router.get("/users", validateAdminUsersQuery, validateRequest, getAllUsers);
+router.get("/users", validateAdminUsersQuery, validateRequest(), getAllUsers);
 router.patch(
   "/users/:id/role",
   validateUserIdParam,
   validateUpdateUserRole,
-  validateRequest,
+  validateRequest(),
   updateUserRole,
 );
 router.patch(
   "/users/:id/block",
   validateUserIdParam,
-  validateRequest,
+  validateRequest(),
   toggleBlockUser,
 );
-router.delete("/users/:id", validateUserIdParam, validateRequest, deleteUser);
+router.delete("/users/:id", validateUserIdParam, validateRequest(), deleteUser);
 
 // 🗄️ Dashboard
 router.get("/dashboard", getAdminStats);

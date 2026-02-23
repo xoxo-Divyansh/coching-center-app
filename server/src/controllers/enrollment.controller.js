@@ -1,4 +1,4 @@
-import asyncHandler from "../utils/asyncHandler.js";
+import {asyncHandler} from "../utils/asyncHandler.js";
 import * as enrollmentService from "../services/enrollment.service.js";
 
 // ➕ Enroll in course

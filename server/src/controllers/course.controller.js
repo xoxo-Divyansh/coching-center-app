@@ -1,5 +1,5 @@
 import * as courseService from "../services/course.service.js";
-import asyncHandler from "../utils/asyncHandler.js";
+import {asyncHandler} from "../utils/asyncHandler.js";
 
 // ✅ Create course
 export const createCourse = asyncHandler(async (req, res) => {

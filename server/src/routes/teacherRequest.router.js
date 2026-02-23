@@ -22,7 +22,7 @@ router.post(
   authMiddleware,
   authorize("student"),
   validateCreateTeacherRequest,
-  validateRequest,
+  validateRequest(),
   requestTeacherRole,
 );
 router.get("/me", authMiddleware, getMyTeacherRequest);
@@ -33,7 +33,7 @@ router.get(
   authMiddleware,
   authorize("admin"),
   validateTeacherRequestListQuery,
-  validateRequest,
+  validateRequest(),
   getTeacherRequests,
 );
 router.patch(
@@ -41,7 +41,7 @@ router.patch(
   authMiddleware,
   authorize("admin"),
   validateTeacherRequestReview,
-  validateRequest,
+  validateRequest(),
   reviewTeacherRequest,
 );
 

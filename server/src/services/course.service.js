@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Course from "../models/Course.js";
+import Enrollment from "../models/Enrollment.js";
 import ApiError from "../utils/apiError.js";
 
 

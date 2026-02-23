@@ -12,11 +12,11 @@ import { validateLogin, validateRegister } from "../validators/auth.validation.j
 const router = express.Router();
 
 // Public routes
-router.post("/register", validateRegister, validateRequest, registerUser);
-router.post("/login", validateLogin, validateRequest, loginUser);
+router.post("/register", validateRegister, validateRequest(), registerUser);
+router.post("/login", validateLogin, validateRequest(), loginUser);
 
 // 🔐 Protected route
-router.get("/me", authMiddleware, getMe);
+router.get("/me", authMiddleware, getMe); 
 
 router.get("/admin-test", authMiddleware, authorize("admin"), (req, res) => {
   res.json({

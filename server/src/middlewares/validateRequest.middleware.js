@@ -1,15 +1,21 @@
 import { validationResult } from "express-validator";
 import ApiError from "../utils/apiError.js";
 
-const validateRequest = (req, res, next) => {
-  const result = validationResult(req);
 
-  if (result.isEmpty()) {
-    return next();
-  }
+const validateRequest = (schema) => {
+  return (req, res, next) => {
+    const errors = validationResult(req);
 
-  const firstError = result.array({ onlyFirstError: true })[0];
-  throw new ApiError(firstError.msg, 400);
+    if (errors.isEmpty()) return next();
+
+    const extractedErrors = errors.array().map(err => ({
+      field: err.param,
+      message: err.msg,
+    }));
+
+    throw new ApiError(extractedErrors[0].message, 400);
+  };
 };
 
 export default validateRequest;
+

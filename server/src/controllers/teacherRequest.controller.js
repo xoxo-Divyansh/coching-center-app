@@ -1,4 +1,4 @@
-import asyncHandler from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import ApiError from "../utils/apiError.js";
 import TeacherRequest from "../models/TeacherRequest.js";
 import User from "../models/User.js";
@@ -9,7 +9,7 @@ import {
   isValidTeacherRequestStatus,
 } from "../utils/validators.js";
 
-const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const escapeRegex = (value) => value.replaceAll(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // 🧑‍🎓 Student → Request teacher role
 export const requestTeacherRole = asyncHandler(async (req, res) => {
@@ -77,8 +77,8 @@ export const getTeacherRequests = asyncHandler(async (req, res) => {
     limit: rawLimit = "10",
   } = req.query;
 
-  const page = Math.max(parseInt(rawPage, 10) || 1, 1);
-  const limit = Math.min(Math.max(parseInt(rawLimit, 10) || 10, 1), 100);
+  const page = Math.max(Number.parseInt(rawPage, 10) || 1, 1);
+  const limit = Math.min(Math.max(Number.parseInt(rawLimit, 10) || 10, 1), 100);
   const skip = (page - 1) * limit;
 
   const filter = {};

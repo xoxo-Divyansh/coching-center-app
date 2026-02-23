@@ -1,7 +1,7 @@
-import asyncHandler from "../utils/asyncHandler.js";
-import ApiError from "../utils/apiError.js";
-import User from "../models/User.js";
 import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+import ApiError from "../utils/apiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import {
   isNonEmptyString,
   isValidEmail,
@@ -17,7 +17,11 @@ const generateToken = (userId) => {
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  if (!isNonEmptyString(name, 2) || !isValidEmail(email) || !isValidPassword(password)) {
+  if (
+    !isNonEmptyString(name, 2) ||
+    !isValidEmail(email) ||
+    !isValidPassword(password)
+  ) {
     throw new ApiError("Invalid registration payload", 400);
   }
 
@@ -44,13 +48,15 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 export const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-
+  // console.log("🔥 LOGIN REQUEST RECEIVED", req.body);
   if (!isValidEmail(email) || !isValidPassword(password)) {
     throw new ApiError("Invalid credentials", 401);
   }
 
   const normalizedEmail = email.trim().toLowerCase();
-  const user = await User.findOne({ email: normalizedEmail }).select("+password");
+  const user = await User.findOne({ email: normalizedEmail }).select(
+    "+password",
+  );
   if (!user) throw new ApiError("Invalid credentials", 401);
 
   if (user.isBlocked) {

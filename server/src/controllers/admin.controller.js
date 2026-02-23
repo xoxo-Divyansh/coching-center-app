@@ -1,4 +1,4 @@
-import asyncHandler from "../utils/asyncHandler.js";
+import {asyncHandler} from "../utils/asyncHandler.js";
 import ApiError from "../utils/apiError.js";
 import AuditLog from "../models/AuditLog.js";
 import User from "../models/User.js";
@@ -14,6 +14,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
     page: rawPage = "1",
     limit: rawLimit = "10",
   } = req.query;
+console.log("ADMIN USERS API HIT");
 
   const page = Math.max(parseInt(rawPage, 10) || 1, 1);
   const limit = Math.min(Math.max(parseInt(rawLimit, 10) || 10, 1), 100);

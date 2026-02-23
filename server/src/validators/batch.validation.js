@@ -56,3 +56,9 @@ export const addStudentsSchema = [
     .isMongoId()
     .withMessage("Invalid student id"),
 ];
+
+export default {
+  createBatchSchema,
+  assignTeacherSchema,
+  addStudentsSchema
+};

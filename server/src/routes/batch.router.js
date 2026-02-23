@@ -7,11 +7,13 @@ import {
   getTeacherBatches,
   getStudentBatches,
   getBatchById,
+  getBatchStudents,
 } from "../controllers/batch.controller.js";
 
-import { auth } from "../middlewares/auth.middleware.js";
-import { authorize } from "../middlewares/authorize.middleware.js";
-import { validateRequest } from "../middlewares/validateRequest.middleware.js";
+import auth from "../middlewares/auth.middleware.js";
+import authorize from "../middlewares/authorize.middleware.js";
+import validateRequest from "../middlewares/validateRequest.middleware.js";
+
 import {
   createBatchSchema,
   assignTeacherSchema,
@@ -26,7 +28,8 @@ router.post(
   "/",
   auth,
   authorize("admin"),
-  validateRequest(createBatchSchema),
+  createBatchSchema,
+  validateRequest(),
   createBatch
 );
 
@@ -36,7 +39,8 @@ router.patch(
   "/:id/assign-teacher",
   auth,
   authorize("admin"),
-  validateRequest(assignTeacherSchema),
+  assignTeacherSchema,
+  validateRequest(),
   assignTeacher
 );
 
@@ -44,7 +48,8 @@ router.patch(
   "/:id/add-students",
   auth,
   authorize("admin"),
-  validateRequest(addStudentsSchema),
+  addStudentsSchema,
+  validateRequest(),
   addStudents
 );
 
@@ -58,6 +63,7 @@ router.get("/student/my", auth, authorize("student"), getStudentBatches);
 
 // ================== Common Routes ==================
 
+router.get("/:id/students", auth, getBatchStudents);
 router.get("/:id", auth, getBatchById);
 
 export default router;

@@ -17,6 +17,7 @@ const batchSchema = new mongoose.Schema(
     teacher: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      default: null,
     },
 
     students: [
@@ -55,4 +56,5 @@ const batchSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export const Batch = mongoose.model("Batch", batchSchema);
+const Batch = mongoose.model("Batch", batchSchema);
+export default Batch;
