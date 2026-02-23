@@ -52,6 +52,9 @@ const ProfileMenu = () => {
                 <Link to="/teacher/courses" className="dropdown-item">
                   <LayoutDashboard size={16} /> My Courses
                 </Link>
+                <Link to="/teacher/attendance" className="dropdown-item">
+                  <LayoutDashboard size={16} /> Attendance
+                </Link>
               </>
             )}
 

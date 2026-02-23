@@ -8,19 +8,24 @@ import MainLayout from "@/layouts/MainLayout";
 import RoleGuard from "@/guards/RoleGuard";
 import RequireAuth from "@/guards/RequireAuth";
 
-import Home from "@/features/public/home/Home";
-import About from "@/features/public/about/About";
-import Login from "@/features/auth/Login";
-import Register from "@/features/auth/Register";
-import Courses from "@/features/courses/Courses";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import TeacherRequestsAdmin from "@/pages/admin/TeacherRequestsAdmin";
-import AdminUsers from "@/pages/admin/AdminUsers";
-import Dashboard from "@/pages/dashboard/Dashboard";
-import Profile from "@/pages/profile/Profile";
-import TeacherRequestPage from "@/pages/student/TeacherRequestPage";
-import TeacherDashboard from "@/pages/teacher/TeacherDashboard";
-import TeacherCourses from "@/pages/teacher/TeacherCourses";
+import Home from "@/modules/public/pages/Home";
+import About from "@/modules/public/pages/About";
+import Login from "@/modules/auth/pages/Login";
+import Register from "@/modules/auth/pages/Register";
+import Courses from "@/modules/course/pages/Courses";
+
+import AdminDashboard from "@/modules/admin/pages/AdminDashboard";
+import TeacherRequestsAdmin from "@/modules/admin/pages/TeacherRequestsAdmin";
+import AdminUsers from "@/modules/admin/pages/AdminUsers";
+import BatchList from "@/modules/batch/pages/BatchList";
+import CreateBatch from "@/modules/batch/pages/CreateBatch";
+import AssignStudents from "@/modules/batch/pages/AssignStudents";
+import TeacherDashboard from "@/modules/teacher/pages/TeacherDashboard";
+import TeacherCourses from "@/modules/teacher/pages/TeacherCourses";
+import Attendance from "@/modules/attendance/pages/Attendance";
+import Dashboard from "@/modules/student/pages/Dashboard";
+import Profile from "@/modules/student/pages/Profile";
+import TeacherRequestPage from "@/modules/student/pages/TeacherRequestPage";
 
 const router = createBrowserRouter([
   // 🌍 Public Pages (Navbar + Footer)
@@ -62,6 +67,7 @@ const router = createBrowserRouter([
             children: [
               { path: "teacher", element: <TeacherDashboard /> },
               { path: "teacher/courses", element: <TeacherCourses /> },
+              { path: "teacher/attendance", element: <Attendance /> },
             ],
           },
         ],
@@ -71,7 +77,9 @@ const router = createBrowserRouter([
         children: [
           {
             element: <MainLayout />,
-            children: [{ path: "teacher-request", element: <TeacherRequestPage /> }],
+            children: [
+              { path: "teacher-request", element: <TeacherRequestPage /> },
+            ],
           },
         ],
       },
@@ -87,6 +95,11 @@ const router = createBrowserRouter([
                 path: "admin/teacher-requests",
                 element: <TeacherRequestsAdmin />,
               },
+
+              // 🆕 Batch Routes
+              { path: "admin/batches", element: <BatchList /> },
+              { path: "admin/batches/create", element: <CreateBatch /> },
+              { path: "admin/batches/:id/assign", element: <AssignStudents /> },
             ],
           },
         ],

@@ -19,6 +19,7 @@ export const NAV_LINK = {
   teacher: [
     { label: "Teacher Panel", to: "/teacher", type: "secondary" },
     { label: "My Courses", to: "/teacher/courses", type: "secondary" },
+    { label: "Attendance", to: "/teacher/attendance", type: "secondary" },
     { label: "Dashboard", to: "/dashboard", type: "secondary" },
     { action: "logout" },
   ],
